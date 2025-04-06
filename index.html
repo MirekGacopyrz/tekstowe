@@ -103,24 +103,5 @@
         </div>
     </div>
 
-    <script>
-        // Skrypt do nawigacji po slajdach
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        slides[currentSlide].classList.add('active');
-
-        document.addEventListener('keydown', function(event) {
-            slides[currentSlide].classList.remove('active');
-            slides[currentSlide].classList.remove('previous');
-            if (event.key === 'ArrowRight') {
-                currentSlide = (currentSlide + 1);
-            } else if (event.key === 'ArrowLeft') {
-                slides[currentSlide].classList.add('previous');
-                currentSlide = (currentSlide - 1);
-            }
-            slides[currentSlide].classList.add('active');
-        });
-    </script>
-
 </body>
 </html>
