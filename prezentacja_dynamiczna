@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prezentacja Slajdów</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            background: lightgray;
+            position: absolute;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+        }
+        .slide.active {
+            display: flex;
+        }
+        header, footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .column {
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        .slide-number {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1em;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="slides-container"></div>
+
+    <script>
+        // Dane JSON zawierające treść slajdów
+        const slideData = [
+            {
+                id: 1,
+                header: "Nagłówek Slajdu 1",
+                leftColumn: "Kolumna 1 - Slajd 1",
+                rightColumn: "Kolumna 2 - Slajd 1",
+                footer: "Stopka Slajdu 1"
+            },
+            {
+                id: 2,
+                header: "Nagłówek Slajdu 2",
+                leftColumn: "Kolumna 1 - Slajd 2",
+                rightColumn: "Kolumna 2 - Slajd 2",
+                footer: "Stopka Slajdu 2"
+            },
+            {
+                id: 3,
+                header: "Nagłówek Slajdu 3",
+                leftColumn: "Kolumna 1 - Slajd 3",
+                rightColumn: "Kolumna 2 - Slajd 3",
+                footer: "Stopka Slajdu 3"
+            }
+        ];
+
+        // Funkcja do generowania slajdów na podstawie danych JSON
+        function generateSlides(slideData) {
+            const slidesContainer = document.getElementById('slides-container');
+            slidesContainer.innerHTML = ''; // Reset slajdów
+
+            slideData.forEach((slide, index) => {
+                const slideElement = document.createElement('div');
+                slideElement.className = `slide ${index === 0 ? 'active' : ''}`;
+                slideElement.id = `slide-${slide.id}`;
+                slideElement.innerHTML = `
+                    <header>${slide.header}</header>
+                    <div class="content">
+                        <div class="column left">${slide.leftColumn}</div>
+                        <div class="column right">${slide.rightColumn}</div>
+                    </div>
+                    <footer>${slide.footer}</footer>
+                    <div class="slide-number">${slide.id}</div>
+                `;
+
+                slidesContainer.appendChild(slideElement);
+            });
+        }
+
+        // Funkcja aktualizująca szerokości kolumn
+        function updateColumnWidths() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => {
+                const leftColumn = slide.querySelector('.left');
+                const rightColumn = slide.querySelector('.right');
+
+                if ((index + 1) % 2 === 0) { // Dla stron parzystych
+                    leftColumn.style.flexBasis = '60%';
+                    rightColumn.style.flexBasis = '40%';
+                } else if (index + 1 >= 3) { // Dla stron nieparzystych od 3 wzwyż
+                    leftColumn.style.flexBasis = '40%';
+                    rightColumn.style.flexBasis = '60%';
+                } else { // Domyślne dla slajdu 1
+                    leftColumn.style.flexBasis = '50%';
+                    rightColumn.style.flexBasis = '50%';
+                }
+            });
+        }
+
+        // Funkcja zmieniająca widoczny slajd
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        // Obsługa zmiany slajdów za pomocą kółka myszy
+        let currentSlide = 0;
+        window.addEventListener('wheel', (event) => {
+            if (event.deltaY > 0) {
+                showSlide(currentSlide + 1);
+            } else if (event.deltaY < 0) {
+                showSlide(currentSlide - 1);
+            }
+            updateColumnWidths();
+        });
+
+        // Generowanie i inicjalizacja slajdów
+        generateSlides(slideData);
+        updateColumnWidths();
+    </script>
+</body>
+</html>
