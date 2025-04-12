@@ -47,6 +47,14 @@
             font-size: 1em;
             color: black;
         }
+        /* Nowy styl dla jednej kolumny */
+        .single-column {
+            flex: 1; /* Kolumna zajmuje całą dostępną przestrzeń */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+        }
     </style>
 </head>
 <body>
@@ -59,8 +67,9 @@
                 id: 1,
                 header: "Nagłówek Slajdu 1",
                 leftColumn: "Kolumna 1 - Slajd 1",
-                rightColumn: "Kolumna 2 - Slajd 1",
-                footer: "Stopka Slajdu 1"
+                rightColumn: "",
+                footer: "Stopka Slajdu 1",
+                singleColumn: true // Flaga dla jednej kolumny
             },
             {
                 id: 2,
@@ -87,37 +96,29 @@
                 const slideElement = document.createElement('div');
                 slideElement.className = `slide ${index === 0 ? 'active' : ''}`;
                 slideElement.id = `slide-${slide.id}`;
-                slideElement.innerHTML = `
-                    <header>${slide.header}</header>
-                    <div class="content">
-                        <div class="column left">${slide.leftColumn}</div>
-                        <div class="column right">${slide.rightColumn}</div>
-                    </div>
-                    <footer>${slide.footer}</footer>
-                    <div class="slide-number">${slide.id}</div>
-                `;
+
+                if (slide.singleColumn) {
+                    // Dla slajdów z jedną kolumną
+                    slideElement.innerHTML = `
+                        <header>${slide.header}</header>
+                        <div class="single-column">${slide.leftColumn}</div>
+                        <footer>${slide.footer}</footer>
+                        <div class="slide-number">${slide.id}</div>
+                    `;
+                } else {
+                    // Dla standardowych slajdów z dwiema kolumnami
+                    slideElement.innerHTML = `
+                        <header>${slide.header}</header>
+                        <div class="content">
+                            <div class="column left">${slide.leftColumn}</div>
+                            <div class="column right">${slide.rightColumn}</div>
+                        </div>
+                        <footer>${slide.footer}</footer>
+                        <div class="slide-number">${slide.id}</div>
+                    `;
+                }
 
                 slidesContainer.appendChild(slideElement);
-            });
-        }
-
-        // Funkcja aktualizująca szerokości kolumn
-        function updateColumnWidths() {
-            const slides = document.querySelectorAll('.slide');
-            slides.forEach((slide, index) => {
-                const leftColumn = slide.querySelector('.left');
-                const rightColumn = slide.querySelector('.right');
-
-                if ((index + 1) % 2 === 0) { // Dla stron parzystych
-                    leftColumn.style.flexBasis = '60%';
-                    rightColumn.style.flexBasis = '40%';
-                } else if (index + 1 >= 3) { // Dla stron nieparzystych od 3 wzwyż
-                    leftColumn.style.flexBasis = '40%';
-                    rightColumn.style.flexBasis = '60%';
-                } else { // Domyślne dla slajdu 1
-                    leftColumn.style.flexBasis = '50%';
-                    rightColumn.style.flexBasis = '50%';
-                }
             });
         }
 
@@ -137,12 +138,10 @@
             } else if (event.deltaY < 0) {
                 showSlide(currentSlide - 1);
             }
-            updateColumnWidths();
         });
 
         // Generowanie i inicjalizacja slajdów
         generateSlides(slideData);
-        updateColumnWidths();
     </script>
 </body>
 </html>
